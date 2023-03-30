@@ -1,56 +1,55 @@
-import './App.css';
-import {Card, Footer, Label} from "flowbite-react";
-import {useEffect, useState} from "react";
+import './App.css'
+import { Footer, Label, Select } from 'flowbite-react'
+import React, { useState } from 'react'
+import { useAsync } from './useAsync.ts'
 
-export default function App() {
-  const [cep, setCep] = useState('');
-  const [endereco, setEndereco] = useState({});
+const fetchStates = async () => {
+  const novosEstados = []
+  const response = await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados')
+  const json = await response.json()
+  json.sort((a, b) => a.sigla > b.sigla ? 1 : -1)
+  json.forEach(({ sigla, nome }) => {
+    novosEstados.push({ value: sigla, name: nome })
+  })
+  // setEstados(novosEstados)
+  return novosEstados
+}
 
-  useEffect(() => {
-    if (cep.length === 8) {
-      fetch(`https://viacep.com.br/ws/${cep}/json/`)
-        .then(response => response.json())
-        .then(data => {
-          setEndereco(data);
-        });
-    } else {
-      setEndereco({});
-    }
-  }, [cep])
+export default function App () {
+  // States data from IBGE
+  const states =
+          useAsync(fetchStates, true)
+
+  // Every state has a code and a name
+  const [selectedState, setSelectedState] = useState({ code: '', name: '' })
 
   return (
     <>
       <main className="flex flex-col items-center justify-center gap-4">
-        <h1 className="text-center text-4xl">Endereço</h1>
+        <h1 className="text-center text-4xl">Brazilian States and Cities</h1>
         <Label
-          htmlFor="cep"
-          value="CEP (somente números)"
+          htmlFor="estados"
+          value="Please select a state"
         />
-        <input id="cep"
-               type="number"
-               value={cep}
-               onChange={({target: {value}}) => {
-                 setCep(value);
-               }}
-               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        />
+        <Select
+          id="estados"
+          value={selectedState.code}
+          onChange={({ target: { value } }) => {
+            // save the current state code and name
+            const { name } = states.value.find(({ value: code }) => code === value)
+            setSelectedState({ code: value, name })
+          }}
+        >
+          {states.status === 'success' && states.value?.map(({ value, name }) => (
+            <option
+              key={value}
+              value={value}
+            >{name}</option>
+          ))}
+        </Select>
 
-        {Object.keys(endereco).length > 0 && (
-          <Card className="max-w-2xl">
-            <h2 className="text-center text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-              Endereço
-            </h2>
-            <p className="font-normal text-gray-700 dark:text-gray-400 text-right">
-              Logradouro: {endereco.logradouro}
-              <br/>
-              Bairro: {endereco.bairro}
-              <br/>
-              Cidade: {endereco.localidade}
-              <br/>
-              UF: {endereco.uf}
-            </p>
-          </Card>
-        )}
+        {states.status === 'error' && <p>Erro ao puxar os estados</p>}
+
       </main>
       <Footer container={true}>
         <Footer.Copyright
@@ -60,5 +59,5 @@ export default function App() {
         />
       </Footer>
     </>
-  );
+  )
 }
