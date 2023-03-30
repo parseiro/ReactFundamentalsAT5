@@ -66,15 +66,13 @@ function Cities(props: Props) {
             </Select>*/}
                 {cities && <>
                   <div className="flex flex-col items-center justify-center text-center">
-                    <p>Página {page} de {totalPages}</p>
+                    <p>Page {page} of {totalPages}</p>
                     <Pagination
                       currentPage={page}
                       layout="navigation"
                       onPageChange={setPage}
                       showIcons={true}
                       totalPages={totalPages}
-                      nextLabel="Próximo"
-                      previousLabel="Anterior"
                     />
                   </div>
                   <CitiesTable cities={cities}

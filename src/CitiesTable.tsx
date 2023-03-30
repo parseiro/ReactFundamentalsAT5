@@ -20,7 +20,7 @@ function CitiesTable(props: Props) {
                     ID
                 </Table.HeadCell>
                 <Table.HeadCell className="min-w-[300px]">
-                    Nome
+                    Name
                 </Table.HeadCell>
             </Table.Head>
             <Table.Body className="divide-y">
