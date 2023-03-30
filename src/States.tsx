@@ -57,6 +57,7 @@ function States(props: Props) {
                     setSelectedState(estado)
                 }}
             >
+                <option value="">Select</option>
                 {states?.map(({sigla, nome}) => (
                     <option
                         key={sigla}

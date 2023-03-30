@@ -21,14 +21,16 @@ export default function App() {
 
     return (
         <>
-            <main className="flex flex-col items-center justify-center gap-4">
+            <main className="flex flex-col items-center gap-4 container">
                 <h1 className="text-center text-4xl">Brazilian States and Cities</h1>
                 <States
                     selectedState={selectedState}
                     setSelectedState={setSelectedState}
                 />
 
-                <Cities stateId={selectedState?.id} />
+                {selectedState && selectedState.id &&
+                  <Cities stateId={selectedState.id}/>
+                }
 
             </main>
             <Footer container={true}>
