@@ -35,5 +35,5 @@ export const useAsync = <T, E = string>(
             execute();
         }
     }, [execute, immediate]);
-    return { execute, status, value, error };
+    return {execute, status, value, error};
 };
